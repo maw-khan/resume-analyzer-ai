@@ -133,27 +133,73 @@ if st.button("Analyze Resume"):
         # OUTPUT UI
         # =====================
 
-        col1, col2 = st.columns(2)
-
-        with col1:
-
-            st.subheader("📊 Match Score")
-            if score >= 75:
-                st.success(f"✅ ATS Match Score: {score}%")
-
-            elif score >= 50:
-                st.warning(f"⚠ ATS Match Score: {score}%")
-
-            else:
-                st.error(f"❌ ATS Match Score: {score}%")
-           
-            st.subheader("✅ Matched Skills")
-            st.write(list(matched))
-
-            st.subheader("❌ Missing Skills")
-            st.write(list(missing)[:25])
-
-        with col2:
-
-            st.subheader("🧠 AI Feedback")
-            st.write(feedback)
+        # =====================
+        # MATCH SCORE
+        # =====================
+        
+        st.subheader("📊 ATS Match Score")
+        
+        if score >= 75:
+        
+            st.success(
+                f"✅ ATS Match Score: {score}%"
+            )
+        
+        elif score >= 50:
+        
+            st.warning(
+                f"⚠ ATS Match Score: {score}%"
+            )
+        
+        else:
+        
+            st.error(
+                f"❌ ATS Match Score: {score}%"
+            )
+        
+        
+        # =====================
+        # MATCHED SKILLS
+        # =====================
+        
+        st.subheader("✅ Matching Skills")
+        
+        if matched:
+        
+            st.write(
+                ", ".join(matched[:20])
+            )
+        
+        else:
+        
+            st.info(
+                "No strong matching skills found."
+            )
+        
+        
+        # =====================
+        # MISSING SKILLS
+        # =====================
+        
+        st.subheader("❌ Missing Skills")
+        
+        if missing:
+        
+            st.write(
+                ", ".join(missing[:20])
+            )
+        
+        else:
+        
+            st.success(
+                "No major missing skills detected."
+            )
+        
+        
+        # =====================
+        # AI FEEDBACK
+        # =====================
+        
+        st.subheader("🧠 AI Resume Feedback")
+        
+        st.write(feedback)
