@@ -28,9 +28,22 @@ st.markdown("Upload resume and job description to get ATS analysis")
 
 load_dotenv()
 
+st.sidebar.title("⚙ Settings")
+
 GOOGLE_API_KEY = st.sidebar.text_input(
     "Enter Gemini API Key",
-    type="password"
+    type="password",
+    help="Your API key is never stored."
+)
+
+st.sidebar.markdown("---")
+
+st.sidebar.info(
+    """
+This AI tool analyzes resumes against
+job descriptions using ATS-style scoring
+and Gemini AI feedback.
+"""
 )
 
 if GOOGLE_API_KEY:
@@ -57,32 +70,63 @@ job_description = st.text_area(
 
 if st.button("Analyze Resume"):
 
-    if not resume_file or not job_description:
-        st.warning("Please upload resume and job description")
+    # CHECK API KEY
+    if not GOOGLE_API_KEY:
+
+        st.warning(
+            "Please enter your Gemini API Key in the sidebar."
+        )
+
+    # CHECK RESUME
+    elif not resume_file:
+
+        st.warning(
+            "Please upload a resume PDF."
+        )
+
+    # CHECK JOB DESCRIPTION
+    elif not job_description.strip():
+
+        st.warning(
+            "Please paste a job description."
+        )
 
     else:
+        try:
 
-        with st.spinner("Analyzing..."):
+    with st.spinner("Analyzing Resume..."):
 
-            # Extract resume
-            resume_text = extract_resume_text(resume_file)
+        # Extract resume text
+        resume_text = extract_resume_text(
+            resume_file
+        )
 
-            # Clean JD
-            jd_text = clean_job_description(job_description)
+        # Clean job description
+        jd_text = clean_job_description(
+            job_description
+        )
 
-            # Score
-            score, matched, missing = calculate_match_score(
-                resume_text,
-                jd_text
-            )
+        # Calculate ATS score
+        score, matched, missing = calculate_match_score(
+            resume_text,
+            jd_text
+        )
 
-            # AI feedback
-            feedback = generate_feedback(
-                resume_text,
-                jd_text,
-                score,
-                missing
-            )
+        # Generate AI feedback
+        feedback = generate_feedback(
+            resume_text,
+            jd_text,
+            score,
+            missing
+        )
+
+except Exception as e:
+
+    st.error(
+        f"An error occurred: {str(e)}"
+    )
+
+    st.stop()
 
 
         # =====================
@@ -94,14 +138,20 @@ if st.button("Analyze Resume"):
         with col1:
 
             st.subheader("📊 Match Score")
-            st.metric("ATS Score", f"{score}%")
+            if score >= 75:
+                st.success(f"✅ ATS Match Score: {score}%")
 
+            elif score >= 50:
+                st.warning(f"⚠ ATS Match Score: {score}%")
+
+            else:
+                st.error(f"❌ ATS Match Score: {score}%")
+           
             st.subheader("✅ Matched Skills")
             st.write(list(matched))
 
             st.subheader("❌ Missing Skills")
-            st.write(list(missing))
-
+            st.write(list(missing)[:25])
 
         with col2:
 
