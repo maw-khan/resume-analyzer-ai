@@ -94,39 +94,39 @@ if st.button("Analyze Resume"):
     else:
         try:
 
-    with st.spinner("Analyzing Resume..."):
+            with st.spinner("Analyzing Resume..."):
 
-        # Extract resume text
-        resume_text = extract_resume_text(
-            resume_file
-        )
+                # Extract resume text
+                resume_text = extract_resume_text(
+                    resume_file
+                )
+        
+                # Clean job description
+                jd_text = clean_job_description(
+                    job_description
+                )
+        
+                # Calculate ATS score
+                score, matched, missing = calculate_match_score(
+                    resume_text,
+                    jd_text
+                )
+        
+                # Generate AI feedback
+                feedback = generate_feedback(
+                    resume_text,
+                    jd_text,
+                    score,
+                    missing
+                )
 
-        # Clean job description
-        jd_text = clean_job_description(
-            job_description
-        )
+        except Exception as e:
 
-        # Calculate ATS score
-        score, matched, missing = calculate_match_score(
-            resume_text,
-            jd_text
-        )
-
-        # Generate AI feedback
-        feedback = generate_feedback(
-            resume_text,
-            jd_text,
-            score,
-            missing
-        )
-
-except Exception as e:
-
-    st.error(
-        f"An error occurred: {str(e)}"
-    )
-
-    st.stop()
+            st.error(
+                f"An error occurred: {str(e)}"
+            )
+        
+            st.stop()
 
 
         # =====================
