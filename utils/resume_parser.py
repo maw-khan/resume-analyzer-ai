@@ -1,12 +1,31 @@
 import fitz
 
+
 def extract_resume_text(pdf_file):
 
-    doc = fitz.open(stream=pdf_file.read(), filetype="pdf")
+    try:
 
-    text = ""
+        doc = fitz.open(
+            stream=pdf_file.read(),
+            filetype="pdf"
+        )
 
-    for page in doc:
-        text += page.get_text() + "\n"
+        text = ""
 
-    return text.strip()
+        for page in doc:
+
+            text += page.get_text() + "\n"
+
+        if not text.strip():
+
+            raise ValueError(
+                "No readable text found in PDF."
+            )
+
+        return text.strip()
+
+    except Exception as e:
+
+        raise Exception(
+            f"Failed to process PDF: {str(e)}"
+        )
